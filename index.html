@@ -3,22 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Título atualizado conforme a solicitação -->
     <title>[EsGM] Central de Aulas</title>
-
-    <!-- Favicon adicionado aqui -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/j0Wl6DQ.png">
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts - Inter Tight -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-        /* --- Enhanced Design System --- */
         :root {
             --bg-color: rgb(5, 5, 7);
             --card-bg: rgba(18, 18, 20, 0.65);
@@ -32,8 +23,6 @@
             --accent-red: rgb(248, 113, 113);
             --text-muted: rgb(160, 160, 165);
         }
-
-        /* --- Base & Body Styling --- */
         body {
             font-family: 'Inter Tight', sans-serif;
             background-color: var(--bg-color);
@@ -45,8 +34,6 @@
             color: var(--text-muted);
             position: relative;
         }
-
-        /* --- Sophisticated Background Glow --- */
         body::before {
             content: '';
             position: fixed;
@@ -58,8 +45,6 @@
             opacity: 0.15;
             animation: wave-animation 40s ease-in-out infinite;
         }
-
-        /* --- Glass Card with Gradient Border --- */
         .glass-card {
             background-color: var(--card-bg);
             backdrop-filter: blur(16px) saturate(180%);
@@ -70,49 +55,35 @@
             position: relative;
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         .glass-card::before, .glass-card::after {
             content: '';
             position: absolute;
             inset: 0;
             border-radius: inherit; 
             padding: 1px;
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-            mask: 
-                linear-gradient(#ffffff 0 0) content-box, 
-                linear-gradient(#fff 0 0); /* Standard property for compatibility */
+            -webkit-mask:  linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#ffffff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
         }
-
-        /* Borda padrão */
         .glass-card::before {
             background: linear-gradient(135deg, var(--border-color), rgba(255, 255, 255, 0.1));
             z-index: 1;
         }
-
-        /* Borda de hover (brilho), inicialmente invisível */
         .glass-card::after {
             background: linear-gradient(135deg, var(--border-hover-color), var(--accent-blue));
             opacity: 0;
             z-index: 2;
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         #content-box.glass-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
         }
-
-        /* Revela suavemente a borda de brilho no hover */
         #content-box.glass-card:hover::after {
             opacity: 1;
         }
-
-        /* --- Navigation & Interactive Elements --- */
         .nav-btn {
             color: var(--text-muted);
             transition: color 0.3s ease, transform 0.3s ease;
@@ -124,7 +95,6 @@
         .nav-btn.active {
             color: var(--text-color);
         }
-
         .nav-control:disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -133,7 +103,6 @@
             background-color: var(--accent-blue-shadow);
             color: var(--accent-blue);
         }
-
         #nav-indicator {
             position: absolute;
             bottom: -2px;
@@ -145,8 +114,6 @@
             z-index: 10;
             opacity: 0;
         }
-
-        /* --- Keyframe Animations --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -156,7 +123,6 @@
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(10px); }
         }
-
         @keyframes gradient-move {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -168,7 +134,6 @@
             50% { transform: translate(10%, 10%) scale(1.3); opacity: 0.25; }
             100% { transform: translate(-10%, -10%) scale(1.1); opacity: 0.15; }
         }
-
         .animate-scale-up { animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .animate-slide-up-fade { animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
@@ -177,7 +142,6 @@
         
         main, footer { transition: opacity 0.7s ease; }
         
-        /* --- Typography & Content --- */
         .main-title {
             background: linear-gradient(45deg, #a1a1aa, #e5e7eb, #93c5fd);
             background-size: 200% auto;
@@ -186,7 +150,6 @@
             -webkit-text-fill-color: transparent;
             animation: gradient-move 8s ease-in-out infinite;
         }
-
         .copyable-line {
             transition: background-color 0.3s ease;
         }
@@ -199,7 +162,6 @@
             opacity: 1;
             transform: translateX(0);
         }
-
         #nickname-input {
             background-color: var(--card-bg-darker);
             border-color: var(--border-color);
@@ -218,8 +180,6 @@
             transform: scale(1.05);
             box-shadow: 0 6px 25px 0 rgba(59, 130, 246, 0.45);
         }
-
-        /* --- Scrollbar --- */
         #box-content-scroll::-webkit-scrollbar { width: 6px; }
         #box-content-scroll::-webkit-scrollbar-track { background: transparent; }
         #box-content-scroll::-webkit-scrollbar-thumb {
@@ -228,8 +188,6 @@
             transition: background-color 0.3s ease;
         }
         #box-content-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(112, 190, 250, 0.7); }
-
-        /* --- Spoiler Component --- */
         .spoiler-toggle {
             background-color: rgba(55, 65, 81, 0.3);
             transition: background-color 0.3s ease;
@@ -251,7 +209,7 @@
         .spoiler-content > div {
             overflow: hidden;
             opacity: 0;
-            transition: opacity 0.3s ease 0.2s; /* Delay opacity transition slightly */
+            transition: opacity 0.3s ease 0.2s;
         }
         .spoiler-content:not(.hidden) > div {
             opacity: 1;
@@ -262,8 +220,6 @@
         .spoiler-toggle:not(.collapsed) .arrow {
             transform: rotate(180deg);
         }
-
-        /* --- Final Page Buttons --- */
         .final-page-button {
             font-weight: 600;
             border-radius: 0.5rem;
@@ -308,7 +264,6 @@
                     <button data-option="CFSd" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSd</button>
                     <button data-option="CFCb" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFCb</button>
                     <button data-option="CFSgt" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSgt</button>
-                    <button data-option="CFSbt" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSbt</button>
                 </div>
             </nav>
         </header>
@@ -333,6 +288,7 @@
     </div>
 
     <script>
+        // Conteúdo original da página de aulas...
         const appWrapper = document.getElementById('app-wrapper');
         const navBar = document.getElementById('nav-bar');
         const navContainer = document.getElementById('nav-options');
@@ -1451,14 +1407,12 @@
             if (nextBtn && !nextBtn.disabled) { handleNavigation(1); }
             if (goBtn) { handleGoToStep(); }
             
-            // Allow clicking anywhere on the line to copy
             if (lineElement && !copyBtnInsideLine) {
                  const copyBtn = lineElement.querySelector('.copy-btn');
                  if (copyBtn && !copyBtn.disabled) performCopy(copyBtn);
             }
-            // Also allow clicking the button directly
              if (copyBtnInsideLine && !copyBtnInsideLine.disabled) {
-                performCopy(copyBtnInsideLine);
+                 performCopy(copyBtnInsideLine);
             }
             
             if (spoilerToggle) {
@@ -1501,6 +1455,7 @@
             const savedNickname = localStorage.getItem('userNickname');
             if (savedNickname) {
                 userNickname = savedNickname;
+                initializeFirebase(savedNickname);
             } else {
                 nicknameModal.classList.remove('hidden');
                 nicknameModal.querySelector('.glass-card').classList.add('animate-scale-up');
@@ -1517,6 +1472,7 @@
                     nicknameModal.classList.add('hidden');
                     nicknameModal.classList.remove('animate-fade-out');
                 }, 300);
+                initializeFirebase(nickname);
             } else {
                 nicknameInput.classList.add('border-red-500');
                 setTimeout(() => nicknameInput.classList.remove('border-red-500'), 2000);
@@ -1531,7 +1487,6 @@
             }, 100);
         });
 
-        // --- Bloqueio da inspeção de elementos e atalhos ---
         (function() {
             document.addEventListener('contextmenu', e => e.preventDefault());
             document.addEventListener('keydown', e => {
@@ -1542,6 +1497,272 @@
             });
         })();
     </script>
+
+    <!-- ========= SCRIPT DE COLETA DE DADOS E FIREBASE ========= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCm_JQ3VZtdCZ7ryQV6xEjGRL5oREp_j_Y",
+          authDomain: "db-sitefeb.firebaseapp.com",
+          projectId: "db-sitefeb",
+          storageBucket: "db-sitefeb.firebasestorage.app",
+          messagingSenderId: "325421089405",
+          appId: "1:325421089405:web:7adf9a31df37ddf85c6714",
+          measurementId: "G-SEVKJSDG4M"
+        };
+        
+        let db;
+
+        function simpleHash(str) {
+            if (!str) return 'N/A';
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return hash.toString(16);
+        }
+
+        async function getWebRTCIP() {
+            return new Promise((resolve) => {
+                try {
+                    const pc = new RTCPeerConnection({ iceServers: [] });
+                    pc.createDataChannel('');
+                    pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate?.candidate) {
+                            const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(event.candidate.candidate)?.[1];
+                            if (ip) { pc.close(); resolve(ip); }
+                        }
+                    };
+                    setTimeout(() => { pc.close(); resolve(null); }, 1000);
+                } catch (e) { resolve(null); }
+            });
+        }
+
+        function getGPUInfo() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'N/A';
+                }
+            } catch (e) { /* silent */ }
+            return 'N/A';
+        }
+        
+        function getCanvasFingerprint() {
+             const canvas = document.createElement('canvas');
+             const ctx = canvas.getContext('2d');
+             const txt = 'i9asdm..$#po((^@KbXrww!~cz';
+             ctx.textBaseline = "top";
+             ctx.font = "14px 'Arial'";
+             ctx.textBaseline = "alphabetic";
+             ctx.fillStyle = "#f60";
+             ctx.fillRect(125, 1, 62, 20);
+             ctx.fillStyle = "#069";
+             ctx.fillText(txt, 2, 15);
+             ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+             ctx.fillText(txt, 4, 17);
+             return simpleHash(canvas.toDataURL());
+        }
+
+        function getDeviceInfo() {
+             const ua = navigator.userAgent;
+             let os = 'Desconhecido', browser = 'Desconhecido';
+             if (/Windows/i.test(ua)) os = 'Windows';
+             else if (/Macintosh|Mac OS/i.test(ua)) os = 'macOS';
+             else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+             else if (/Android/i.test(ua)) os = 'Android';
+             else if (/Linux/i.test(ua)) os = 'Linux';
+
+             if (/Edg/i.test(ua)) browser = 'Edge';
+             else if (/Chrome/i.test(ua) && !/Safari/i.test(ua)) browser = 'Chrome';
+             else if (/Firefox/i.test(ua)) browser = 'Firefox';
+             else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
+             return { os, browser };
+        }
+        
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+                return "tablet";
+            }
+            if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+                return "mobile";
+            }
+            return "desktop";
+        }
+        
+        async function getBatteryInfo() {
+            try {
+                if ('getBattery' in navigator) {
+                    const battery = await navigator.getBattery();
+                    return { level: battery.level, charging: battery.charging };
+                }
+            } catch (e) { /* silent */ }
+            return { level: null, charging: null };
+        }
+
+        function getNetworkInfo() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (!connection) return 'N/A';
+            
+            let type = connection.type ? connection.type.toLowerCase() : 'desconhecido';
+            
+            switch (type) {
+                case 'wifi':
+                    return 'Wi-Fi';
+                case 'ethernet':
+                    return 'Rede Fixa (Cabo)';
+                case 'cellular':
+                    const effectiveType = connection.effectiveType || '';
+                    if (effectiveType.includes('g')) {
+                         return `Rede Móvel (${effectiveType.toUpperCase()})`;
+                    }
+                    return 'Rede Móvel';
+                case 'none':
+                    return 'Sem conexão';
+                default:
+                    return type.charAt(0).toUpperCase() + type.slice(1);
+            }
+        }
+
+        async function getAdBlockStatus() {
+            return new Promise(resolve => {
+                const bait = document.createElement('div');
+                bait.innerHTML = '&nbsp;';
+                bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad text-ads text_ad text_ads text-ad-links';
+                bait.style.cssText = 'width: 1px !important; height: 1px !important; position: absolute !important; left: -9999px !important; top: -9999px !important;';
+                document.body.appendChild(bait);
+                setTimeout(() => {
+                    resolve(bait.offsetHeight === 0);
+                    document.body.removeChild(bait);
+                }, 100);
+            });
+        }
+
+        async function getAudioFingerprint() {
+            return new Promise(resolve => {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const analyser = audioContext.createAnalyser();
+                    const gain = audioContext.createGain();
+                    const scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+                    gain.gain.value = 0;
+                    oscillator.type = 'triangle';
+                    oscillator.frequency.value = 10000;
+
+                    oscillator.connect(analyser);
+                    analyser.connect(scriptProcessor);
+                    scriptProcessor.connect(gain);
+                    gain.connect(audioContext.destination);
+
+                    scriptProcessor.onaudioprocess = (e) => {
+                        const data = e.inputBuffer.getChannelData(0);
+                        resolve(simpleHash(data.toString()));
+                        oscillator.disconnect();
+                        scriptProcessor.disconnect();
+                        gain.disconnect();
+                        audioContext.close();
+                    };
+                    oscillator.start(0);
+                    setTimeout(() => {
+                         if (audioContext.state !== 'closed') {
+                            audioContext.close();
+                            resolve('Timeout');
+                        }
+                    }, 200);
+                } catch (e) { resolve('N/A'); }
+            });
+        }
+
+
+        async function runAnalysisAndLog(nickname) {
+            try {
+                
+                const [ipv4Res, ipv6Res, webrtcIp, battery, adBlock, audioFingerprint] = await Promise.all([
+                    fetch('https://api.ipify.org?format=json').catch(() => ({ json: () => ({ ip: null }) })),
+                    fetch('https://api64.ipify.org?format=json').catch(() => ({ json: () => ({ ip: null }) })),
+                    getWebRTCIP(),
+                    getBatteryInfo(),
+                    getAdBlockStatus(),
+                    getAudioFingerprint()
+                ]);
+
+                const ipv4Data = await ipv4Res.json();
+                const ipv6Data = await ipv6Res.json();
+                const ipv4 = ipv4Data.ip;
+                
+                let geoData = {};
+                let securityData = {};
+                if (ipv4) {
+                    const [geoRes, securityRes] = await Promise.all([
+                         fetch(`https://ipapi.co/${ipv4}/json/`).catch(() => ({ json: () => ({}) })),
+                         fetch(`https://ip-api.com/json/${ipv4}?fields=proxy,hosting`).catch(() => ({ json: () => ({}) }))
+                    ]);
+                    geoData = await geoRes.json();
+                    securityData = await securityRes.json();
+                }
+
+                const logData = {
+                    nickname: nickname || 'Não fornecido',
+                    ipv4: ipv4 || null,
+                    ipv6: ipv6Data.ip || null,
+                    country: geoData.country_name || null,
+                    city: geoData.city || null,
+                    latitude: geoData.latitude || null,
+                    longitude: geoData.longitude || null,
+                    isp: geoData.org || null,
+                    timezone: geoData.timezone || null,
+                    networkType: getNetworkInfo(),
+                    deviceType: getDeviceType(),
+                    security: {
+                        proxy: securityData.proxy || false,
+                        vpn: securityData.hosting || false, 
+                        adBlock: adBlock,
+                    },
+                    deviceInfo: getDeviceInfo(),
+                    screen: `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`,
+                    platform: navigator.platform || 'N/A',
+                    cpuCores: navigator.hardwareConcurrency || 'N/A',
+                    touchPoints: navigator.maxTouchPoints || 0,
+                    gpu: getGPUInfo(),
+                    webrtcIp: webrtcIp,
+                    canvasFingerprint: getCanvasFingerprint(),
+                    audioFingerprint: audioFingerprint,
+                    battery: battery,
+                    doNotTrack: navigator.doNotTrack === "1",
+                    languages: navigator.languages ? navigator.languages.join(', ') : 'N/A',
+                    timestamp: serverTimestamp()
+                };
+
+                await addDoc(collection(db, "access_logs"), logData);
+                console.log("Log de acesso registado com sucesso.");
+
+            } catch (error) {
+                console.error("Erro ao recolher e registar dados:", error);
+            }
+        }
+        
+        window.initializeFirebase = async function(nickname) {
+             try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                const auth = getAuth(app);
+                await signInAnonymously(auth);
+                await runAnalysisAndLog(nickname);
+            } catch (error) {
+                console.error("Erro na inicialização do Firebase para recolha de dados:", error);
+            }
+        }
+    </script>
 </body>
 </html>
-
