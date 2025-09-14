@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título atualizado conforme a solicitação -->
+    <title>[EsGM] Central de Aulas</title>
+
+    <!-- Favicon adicionado aqui -->
+    <link rel="icon" type="image/png" href="https://i.imgur.com/j0Wl6DQ.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Enhanced Design System --- */
+        :root {
+            --bg-color: rgb(5, 5, 7);
+            --card-bg: rgba(18, 18, 20, 0.65);
+            --card-bg-darker: rgba(12, 12, 14, 0.8);
+            --border-color: rgba(55, 65, 81, 0.4);
+            --border-hover-color: rgba(112, 190, 250, 0.3);
+            --text-color: rgb(240, 240, 245);
+            --accent-blue: rgb(112, 190, 250);
+            --accent-blue-shadow: rgba(112, 190, 250, 0.2);
+            --accent-green: rgb(74, 222, 128);
+            --accent-red: rgb(248, 113, 113);
+            --text-muted: rgb(160, 160, 165);
+        }
+
+        /* --- Base & Body Styling --- */
+        body {
+            font-family: 'Inter Tight', sans-serif;
+            background-color: var(--bg-color);
+            background-image: url('https://i.imgur.com/08qCnMt.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        /* --- Sophisticated Background Glow --- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at center, rgba(112, 190, 250, 0.5) 0%, transparent 60%);
+            background-size: 200% 200%;
+            filter: blur(150px);
+            opacity: 0.15;
+            animation: wave-animation 40s ease-in-out infinite;
+        }
+
+        /* --- Glass Card with Gradient Border --- */
+        .glass-card {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card::before, .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit; 
+            padding: 1px;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask: 
+                linear-gradient(#ffffff 0 0) content-box, 
+                linear-gradient(#fff 0 0); /* Standard property for compatibility */
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Borda padrão */
+        .glass-card::before {
+            background: linear-gradient(135deg, var(--border-color), rgba(255, 255, 255, 0.1));
+            z-index: 1;
+        }
+
+        /* Borda de hover (brilho), inicialmente invisível */
+        .glass-card::after {
+            background: linear-gradient(135deg, var(--border-hover-color), var(--accent-blue));
+            opacity: 0;
+            z-index: 2;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #content-box.glass-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Revela suavemente a borda de brilho no hover */
+        #content-box.glass-card:hover::after {
+            opacity: 1;
+        }
+
+        /* --- Navigation & Interactive Elements --- */
+        .nav-btn {
+            color: var(--text-muted);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .nav-btn:not(.active):hover {
+            color: var(--text-color);
+            transform: translateY(-2px);
+        }
+        .nav-btn.active {
+            color: var(--text-color);
+        }
+
+        .nav-control:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .nav-control:not(:disabled):hover {
+            background-color: var(--accent-blue-shadow);
+            color: var(--accent-blue);
+        }
+
+        #nav-indicator {
+            position: absolute;
+            bottom: -2px;
+            height: 2px;
+            background-image: linear-gradient(to right, var(--accent-blue), #86e7f0);
+            box-shadow: 0 0 12px var(--accent-blue-shadow), 0 0 5px var(--accent-blue-shadow);
+            border-radius: 1px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            opacity: 0;
+        }
+
+        /* --- Keyframe Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUpFade { from { transform: translateY(25px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @keyframes contentFadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes wave-animation {
+            0% { transform: translate(-10%, -10%) scale(1.1); opacity: 0.15; }
+            50% { transform: translate(10%, 10%) scale(1.3); opacity: 0.25; }
+            100% { transform: translate(-10%, -10%) scale(1.1); opacity: 0.15; }
+        }
+
+        .animate-scale-up { animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-slide-up-fade { animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-fade-out { animation: fadeOut 0.4s ease-in forwards; }
+        .animate-content-fade-out { animation: contentFadeOut 0.3s ease-out forwards; }
+        
+        main, footer { transition: opacity 0.7s ease; }
+        
+        /* --- Typography & Content --- */
+        .main-title {
+            background: linear-gradient(45deg, #a1a1aa, #e5e7eb, #93c5fd);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-move 8s ease-in-out infinite;
+        }
+
+        .copyable-line {
+            transition: background-color 0.3s ease;
+        }
+        .copyable-line .copy-btn {
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateX(-5px);
+        }
+        .copyable-line:hover .copy-btn {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        #nickname-input {
+            background-color: var(--card-bg-darker);
+            border-color: var(--border-color);
+        }
+        #nickname-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--accent-blue-shadow);
+        }
+        
+        #save-nickname-btn {
+            background: linear-gradient(45deg, #2563eb, var(--accent-blue));
+            box-shadow: 0 4px 20px 0 rgba(59, 130, 246, 0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #save-nickname-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px 0 rgba(59, 130, 246, 0.45);
+        }
+
+        /* --- Scrollbar --- */
+        #box-content-scroll::-webkit-scrollbar { width: 6px; }
+        #box-content-scroll::-webkit-scrollbar-track { background: transparent; }
+        #box-content-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(112, 190, 250, 0.4);
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        #box-content-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(112, 190, 250, 0.7); }
+
+        /* --- Spoiler Component --- */
+        .spoiler-toggle {
+            background-color: rgba(55, 65, 81, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        .spoiler-toggle:hover {
+            background-color: var(--border-color);
+        }
+        .spoiler-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            background-color: var(--card-bg-darker);
+            border-radius: 0.5rem;
+            transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .spoiler-content:not(.hidden) {
+            grid-template-rows: 1fr;
+            margin-top: 0.5rem;
+        }
+        .spoiler-content > div {
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.2s; /* Delay opacity transition slightly */
+        }
+        .spoiler-content:not(.hidden) > div {
+            opacity: 1;
+        }
+        .spoiler-toggle .arrow {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .spoiler-toggle:not(.collapsed) .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* --- Final Page Buttons --- */
+        .final-page-button {
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease-in-out;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            background-color: var(--card-bg-darker);
+        }
+        .final-page-button:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-blue);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        .btn-system:hover { box-shadow: 0 10px 25px var(--accent-blue-shadow); }
+        
+        .justified-text { text-align: justify; }
+    </style>
+</head>
+<body class="min-h-screen">
+    
+    <!-- Nickname Modal -->
+    <div id="nickname-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-opacity duration-500">
+        <div class="glass-card w-full max-w-sm rounded-2xl p-8 text-center">
+            <h2 class="text-2xl font-bold mb-4 text-gray-100">Bem-vindo!</h2>
+            <p class="text-gray-400 mb-6">Por favor, insira seu nickname para personalizar os scripts.</p>
+            <input id="nickname-input" type="text" placeholder="Digite seu nickname aqui..." class="w-full text-white placeholder-gray-400 rounded-lg px-4 py-3 border focus:outline-none transition-all duration-300">
+            <button id="save-nickname-btn" class="w-full text-white font-bold py-3 px-8 rounded-lg mt-6">
+                Salvar e Continuar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main App Wrapper -->
+    <div id="app-wrapper" class="w-full min-h-screen flex flex-col items-center p-4 justify-center gap-6 transition-all duration-700 ease-in-out">
+        <header class="w-full max-w-lg">
+            <nav id="nav-bar" class="glass-card rounded-xl p-1.5 shadow-md">
+                <div id="nav-options" class="relative flex flex-wrap items-center justify-center gap-x-1 sm:gap-x-2">
+                    <div id="nav-indicator"></div>
+                    <button data-option="CFi" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFI</button>
+                    <button data-option="CFSd" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSd</button>
+                    <button data-option="CFCb" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFCb</button>
+                    <button data-option="CFSgt" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSgt</button>
+                    <button data-option="CFSbt" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg">CFSbt</button>
+                </div>
+            </nav>
+        </header>
+
+        <main id="main-container" class="w-full max-w-lg flex-grow flex items-center justify-center opacity-0">
+            <div id="content-box" class="glass-card w-full h-full min-h-[50vh] rounded-2xl p-4 sm:p-5 flex-col hidden relative">
+                <div id="box-content" class="flex-grow overflow-hidden"></div>
+                <button id="close-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-200 transition-colors z-20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div id="initial-message" class="text-center text-gray-400">
+                <h2 class="text-6xl font-bold main-title animate-slide-up-fade">Central de Aulas</h2>
+                <p class="mt-2 max-w-md text-gray-400 animate-slide-up-fade [animation-delay:150ms]">Selecione uma das opções acima.</p>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-500 text-sm opacity-0 animate-slide-up-fade [animation-delay:300ms]">
+            <p>Desenvolvida por <span class="main-title font-semibold">.Brendon</span></p>
+        </footer>
+    </div>
+
+    <script>
+        const appWrapper = document.getElementById('app-wrapper');
+        const navBar = document.getElementById('nav-bar');
+        const navContainer = document.getElementById('nav-options');
+        const contentBox = document.getElementById('content-box');
+        const boxContent = document.getElementById('box-content');
+        const closeBtn = document.getElementById('close-btn');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const initialMessage = document.getElementById('initial-message');
+        const nicknameModal = document.getElementById('nickname-modal');
+        const nicknameInput = document.getElementById('nickname-input');
+        const saveNicknameBtn = document.getElementById('save-nickname-btn');
+        
+        let navIndicator = document.getElementById('nav-indicator');
+        let currentOption = null;
+        let currentStep = 0;
+        let userNickname = '';
+        let isInitialLayout = true;
+
+    const contentData = {
+            'CFi': {
+                title: 'CURSO DE FORMAÇÃO INICIAL',
+                steps: [
+                    {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, recruta! Seja bem-vindo às Forças Expedicionária Brasileira e à sua primeira aula.' },
+                            { type: 'line', text: 'Neste momento, eu, instrutor(a) [USERNAME], irei ensinar' },
+                            { type: 'line', text: 'os conceitos básicos da nossa polícia.' },
+                            { type: 'line', text: 'Caso necessário, anote todas informações repassadas,' },
+                            { type: 'line', text: 'visto que haverá dois exames: um prático e um teórico.' },
+                            { type: 'line', text: 'Em casos de desconexão, aguarde-me cerca de 3 minutos.' },
+                            { type: 'line', text: 'Caso contrário, retorne ao batalhão pelo navegador.' },
+                            { type: 'line', text: 'Permaneça em silêncio durante a instrução; em caso de dúvidas, apenas acene.' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Caso o recruta tenha dúvidas, esclareça-as; caso contrário, prossiga.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'NEGRITO' },
+                            { type: 'line', text: 'A utilização do negrito é de extrema importância dentro dos quartos oficiais da FEB.' },
+                            { type: 'line', text: 'Você sabe falar em negrito?' },
+                            { type: 'orientation', text: 'Caso saiba, pule para a última linha.' },
+                            { type: 'spoiler', 
+                              title: 'CASO NÃO SAIBA',
+                              content: [
+                                  { type: 'line', text: 'Você está jogando pelo celular ou computador?' },
+                                    { type: 'spoiler', 
+                                        title: 'COMPUTADOR',
+                                        content: [
+                                        { type: 'line', text: 'Para quem está jogando pelo launcher no PC, usar o negrito é muito simples: basta' },
+                                        { type: 'line', text: 'segurar a tecla “Shift” do teclado e pressionar “Enter” para enviar a mensagem em negrito.' },
+                                        { type: 'line', text: 'Vamos praticar:' },
+                                        { type: 'line', text: 'Digite “Sim, senhor” e, antes de enviar a mensagem, mantenha pressionada a tecla' },
+                                        { type: 'line', text: '“Shift” e, em seguida, pressione “Enter”.' },
+                                    ]
+                                },
+                                { type: 'spoiler', 
+                                        title: 'CELULAR',
+                                        content: [
+                                        { type: 'line', text: 'Para quem está jogando pelo celular, usar o negrito também é muito simples: digite' },
+                                        { type: 'line', text: '“:Shout + a palavra” e envie.' },
+                                        { type: 'line', text: 'Vamos praticar:' }
+                                    ]
+                                },
+                            ]
+                        },
+                        { type: 'line', text: 'Ótimo! Lembre-se de usar o negrito, visto que é de extrema importância.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'COMANDOS' },
+                            { type: 'line', text: 'Ao todo, existem 08 comandos, sendo: Sentido, Continência, Apresentar armas,' },
+                            { type: 'line', text: 'Marcar passos, Silêncio, Apresente-se, Dispensado e À vontade.' },
+                            { type: 'line', text: 'Mas, nesta aula, só vamos te ensinar 6 deles.' },
+                            { type: 'line', text: 'Você conhece os comandos?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) recruta(s). Caso ele(s) saiba(m) os comandos, pule diretamente para o teste prático. Caso ele(s) não saiba(m), repasse a explicação dos comandos.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO NÃO SAIBA',
+                                        content: [
+                                        { type: 'line', text: 'Irei ensinar cada um deles e, em seguida, praticá-los.' },
+                                        { type: 'line', text: 'Você terá 3 chances para executá-los, caso esgote-as será reprovado(a).' },
+                                        { type: 'orientation', text: 'Passe a explicação e, logo após, pratique o comando conforme o script. Caso o recruta tenha dificuldades, ajude-o!' },
+                                        { type: 'line', text: 'Sentido: consiste em levantar-se, ficar reto, manter-se imóvel'},
+                                        { type: 'line', text: 'e em silêncio até que outro comando seja aplicado.' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'Continência: consiste em acenar uma única vez. Para isso, envie “o/”.' },
+                                        { type: 'line', text: 'CONTINÊNCIA!' },
+                                        { type: 'line', text: 'Apresentar armas: consiste em acenar repetidamente (envie “o/” a cada 2 segundos)' },
+                                        { type: 'line', text: 'até que o comando Sentido seja aplicado novamente.' },
+                                        { type: 'line', text: 'APRESENTAR ARMAS!' },
+                                        { type: 'line', text: 'Marcar passos: consiste em dançar Hip-Hop e parar quando for dado o comando' },
+                                        { type: 'line', text: 'Sentido. Para dançar, basta clicar no seu Habbo, ir em “Dança” e escolher a' },
+                                        { type: 'line', text: 'opção “Hip-Hop”. Para usuários mobile, basta segurar o dedo sobre o' },
+                                        { type: 'line', text: 'personagem e abrir o menu.' },
+                                        { type: 'line', text: 'MARCAR-PASSOS!' },
+                                        { type: 'line', text: 'Silêncio: manter absoluto silêncio, ininterruptamente, até ordem de dispensa.' },
+                                        { type: 'line', text: 'SILÊNCIO!' },
+                                        { type: 'line', text: 'À vontade: consiste em liberar o retorno do policial às suas atividades anteriores.' },
+                                        { type: 'line', text: 'Ex.: Sente-se ou volte ao que estava fazendo.' },
+                                        { type: 'line', text: 'À VONTADE!' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Caso  já saiba(m) os comandos, utilize o spoiler abaixo.' },
+                                        { type: 'spoiler', 
+                                        title: 'CASO SAIBA',
+                                        content: [
+                                        { type: 'line', text: 'Você terá 3 chances para executá-los, caso esgote-as será reprovado(a). Vamos começar?' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'CONTINÊNCIA!' },
+                                        { type: 'line', text: 'APRESENTAR-ARMAS!' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'MARCAR-PASSOS!'},
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'SILÊNCIO!' },
+                                        { type: 'line', text: 'À VONTADE!' },
+                                    ]
+                                },
+                            { type: 'line', text: 'Excelente! Os comandos Apresente-se e Dispensado serão ensinados no Curso de Formação de Soldados.' },
+                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você esgotou suas chances e está reprovado(a).' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Pode retornar para o batalhão para refazer seu alistamento.' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os recrutas que permanecerem. Caso não haja nenhum, finalize e registre a aula somente na planilha de aulas.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'HISTÓRIA' },
+                            { type: 'line', text: 'A Força Expedicionária Brasileira (FEB) foi criada em 15 de agosto de 2025 por' },
+                            { type: 'line', text: 'Setfaan e Pykes.Ban, que atualmente ocupam o posto de Chefes-de-Estado da instituição.' },
+                            { type: 'line', text: 'A nossa missão é resgatar valores perdidos, sentimentos de nostalgia,' },
+                            { type: 'line', text: 'inovar e fortalecer policiais, promovendo ' },
+                            { type: 'line', text: 'qualidade e realismo no ramo militar.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'HIERARQUIA' },
+                            { type: 'line', text: 'Inicialmente, começará na primeira patente/cargo da hierarquia militar,' },
+                            { type: 'line', text: 'sendo Soldado/Policial.' },
+                            { type: 'line', text: 'No entanto, existem outras patentes, como Cabo, Sargento, Suboficial,' },
+                            { type: 'line', text: 'assim como suas equivalências ao Corpo Empresarial.' },
+                            { type: 'line', text: 'Você será promovido sempre que cumprir os requisitos, como:' },
+                            { type: 'line', text: 'o tempo mínimo em cada patente e os cursos obrigatórios.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'PRONOMES DE TRATAMENTO' },
+                            { type: 'line', text: 'A forma de tratamento com superiores hierárquicos, é obrigatório o uso de pronomes de' },
+                            { type: 'line', text: 'tratamento por todos os militares. Sempre que se dirigir a um superior,' },
+                            { type: 'line', text: 'utilize senhor(a) + patente/cargo ou nickname.' },
+                            { type: 'line', text: 'Ex.: “Sim, senhor sargento.” ou “Posso me ausentar, senhora Maria?”' },
+                            { type: 'line', text: 'Já no caso de militares de patente igual ou inferior, deve-se utilizar apenas patente/cargo + nickname.' },
+                            { type: 'line', text: 'Ex.: “Sim, soldado João.” ou “Soldado Bruno, venha até aqui!”' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s). Caso ele(s) tenha(m) dúvidas, retire-as.' },
+                            { type: 'orientation', text: 'A partir de agora, comece a cobrar o uso dos pronomes pelos recrutas. Caso não sejam utilizados, oriente a usá-los corretamente.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'RECEPÇÃO' },
+                            { type: 'line', text: 'A recepção é a porta de entrada da polícia. Ou seja, todos os civis que desejarem se' },
+                            { type: 'line', text: 'alistar passarão primeiro por você, sendo o primeiro contato deles.' },
+                            { type: 'line', text: 'Por isso, é fundamental seguir algumas regras:' },
+                            { type: 'line', text: 'Seja educado e cordial;' },
+                            { type: 'line', text: 'Realize o processo de alistamento da melhor forma possível;' },
+                            { type: 'line', text: 'Retire todas as dúvidas do civil;' },
+                            { type: 'line', text: 'Caso não saiba responder a alguma pergunta, acene que um superior irá orientá-lo.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'COMO ASSUMIR A RECEPÇÃO' },
+                            { type: 'line', text: 'Ao chegar na recepção e não houver cadeiras vazias, deve-se assumir um' },
+                            { type: 'line', text: 'superior da seguinte forma: mantenha-se a um quadrado de distância' },
+                            { type: 'line', text: 'do superior e digite:' },
+                            { type: 'line', text: '“Assumo, senhor/senhora + patente/cargo ou nickname.”' },
+                            { type: 'line', text: 'Ex.: “Assumo, senhor sargento.” ou “Assumo, senhora Maria.”' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'REQUISITOS PARA O ALISTAMENTO' },
+                            { type: 'line', text: 'Para efetuar o alistamento, é obrigatório verificar os seguintes requisitos:' },
+                            { type: 'line', text: 'Fardamento:' },
+                            { type: 'line', text: 'Camisa preta com bolsos para personagens masculinos e top preto sem mangas para' },
+                            { type: 'line', text: 'personagens femininos; calça preta com bolsos e sapatos pretos de bico arredondado' },
+                            { type: 'line', text: 'para ambos os gêneros de personagens.' },
+                            { type: 'line', text: 'Além do fardamento, é proibida a entrada de civis/recrutas com acessórios, sejam' },
+                            { type: 'line', text: 'eles brincos, óculos, efeitos e até mesmo barbas. O uso de cabelos muito grandes' },
+                            { type: 'line', text: 'também é proibido, assim como tonalidades de pele que não condizem com a' },
+                            { type: 'line', text: 'realidade, pois cores fora do padrão real não serão permitidas.' },
+                            { type: 'line', text: 'Missão:' },
+                            { type: 'line', text: 'A missão do civil/recruta, que deve estar totalmente em branco, sem qualquer texto.' },
+                            { type: 'line', text: 'Grupos:' },
+                            { type: 'line', text: 'Ele deve ter o grupo oficial da Polícia FEB favoritado, sendo proibida a entrada caso' },
+                            { type: 'line', text: 'estejam em grupos de outras organizações militares ou que sejam contrárias às regras' },
+                            { type: 'line', text: 'estipuladas na Habbo Etiqueta.' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s). Caso ele(s) tenha(m) dúvidas, retire-as.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Agora, serão feitas 05 perguntas referentes ao conteúdo que foi ensinado.' },
+                            { type: 'line', text: 'Você deve acertar ao menos 02 questões para ser aprovado. Desde já, boa sorte!' },
+                            { type: 'orientation', text: 'Caso o recruta cometa o terceiro erro, reprove-o imediatamente!' },
+                            { type: 'orientation', text: 'Caso o recruta erre 02 questões, faça a correção ao final do exame, explicando a forma correta.' },
+                            { type: 'orientation', text: 'Lembrando: não forneça as respostas aos recrutas, principalmente aos reprovados.' },
+                            { type: 'orientation', text: 'As respostas dos recrutas não precisam estar igual ao script. É importante que você avalie se o recruta soube entender o que é proposto na aula.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM RECRUTA',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os recrutas não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                                },
+                        ]
+                    },
+                     { 
+                        content: [
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 - Qual a forma de tratamento com superiores?' },
+                            { type: 'orientation', text: 'R.: Senhor/Senhora.' },
+                            { type: 'line', text: 'Questão 02 - Como devem assumir um superior na recepção?' },
+                            { type: 'orientation', text: 'R.: um quadrado de distância e digitar: Assumo, senhor/senhora + nome ou patente.' },
+                            { type: 'line', text: 'Questão 03 - Quais são os três requisitos de alistamento?' },
+                            { type: 'orientation', text: 'R.: Fardamento, Missão e Grupo.' },
+                            { type: 'line', text: 'Questão 04 - Como deve estar a missão do civil/recruta?' },
+                            { type: 'orientation', text: 'R.: Missão vazia/limpa, sem texto escrito.' },
+                            { type: 'line', text: 'Questão 05 - Quais são os dois chefes de estado da FEB?' },
+                            { type: 'orientation', text: 'R.: Setfaan e Pykes.Ban' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'CONCLUSÃO' },
+                            { type: 'spoiler', 
+                                        title: 'EM CASO DE APROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Parabéns, você foi aprovado no Curso de Formação Inicial!' },
+                                        { type: 'line', text: 'Coloque uma boina preta e escreva em sua missão: [FEB] Soldado [CDE]' },
+                                        { type: 'orientation', text: 'Aguarde o aluno realizar os procedimentos! Lembre-se de substituir “SUA TAG” pela sua própria TAG.' },
+                                        { type: 'line', text: 'Excelente, seja bem-vindo oficialmente à Força Expedicionária Brasileira, e' },
+                                        { type: 'line', text: 'agradecemos por escolher fazer parte dessa grande família.' },
+                                        { type: 'line', text: 'Lembre-se: para encontrar nosso batalhão, basta pesquisar' },
+                                        { type: 'line', text: 'por “FEB” no navegador de quartos.' },
+                                        { type: 'line', text: 'Caso permaneça mais de 5 dias offline do jogo, você será demitido. Portanto, é' },
+                                        { type: 'line', text: 'fundamental manter constância de presença.' },
+                                        { type: 'line', text: 'Aguarde enquanto posto a aula.' },
+                                        { type: 'orientation', text: 'Poste a aula na planilha de aulas e no System dos alunos aprovados! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução. Em casos de erro de postagem no System, procure um membro do SRA. Já em casos de erro de postagem na planilha, faça uma retificação em até 24 horas. O não cumprimento acarretará em punições internas.' }
+                                    ]
+                                },
+                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Lamento, mas infelizmente você errou mais de duas questões e está reprovado(a). ' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Pode retornar para o batalhão para refazer seu alistamento.' },
+                                    ]
+                                },
+                            ]
+                    },
+                    {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    }
+                ]
+            },
+            'CFSd': { title: 'CURSO DE FORMAÇÃO DE SOLDADO/POLICIAL', 
+            steps: [ 
+                        {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                        { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, soldado/pilicial! Seja bem-vindo às Forças Expedicionária Brasileira' },
+                            { type: 'line', text: 'e ao seu Curso de Formação de Soldados e Policiais.' },
+                            { type: 'line', text: 'Neste momento, eu, instrutor(a) [USERNAME], irei ensinar' },
+                            { type: 'line', text: 'os conceitos básicos da nossa polícia.' },
+                            { type: 'line', text: 'Caso necessário, anote todas informações repassadas,' },
+                            { type: 'line', text: 'visto que haverá dois exames: um prático e um teórico.' },
+                            { type: 'line', text: 'Em casos de desconexão, aguarde-me cerca de 3 minutos.' },
+                            { type: 'line', text: 'Caso contrário, retorne ao batalhão pelo navegador.' },
+                            { type: 'line', text: 'Permaneça em silêncio durante a instrução; em caso de dúvidas, apenas acene.' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Caso o militar tenha dúvidas, esclareça-as; caso contrário, prossiga.' }
+                        ]
+                    },
+                { 
+                    content: [
+                            { type: 'title', text: 'COMANDOS' },
+                            { type: 'line', text: 'Vamos praticar os comandos que você aprendeu no Curso de Formação Inicial.' },
+                            { type: 'orientation', text: 'Aguarde a confirmação do(s) soldado(s) para prosseguir.'},
+                            { type: 'line', text: 'SENTIDO!' },
+                            { type: 'line', text: 'CONTINÊNCIA!' },
+                            { type: 'line', text: 'APRESENTAR-ARMAS!' },
+                            { type: 'line', text: 'SENTIDO!' },
+                            { type: 'line', text: 'MARCAR-PASSOS!'},
+                            { type: 'line', text: 'SENTIDO!' },
+                            { type: 'line', text: 'SILÊNCIO!' },
+                            { type: 'line', text: 'À VONTADE!' },
+                            { type: 'orientation', text: 'Após realizar a prática dos comandos, prossiga para abaixo:'},
+                            { type: 'line', text: 'Excelente! Agora você irá aprender dois novos comandos:' },
+                            { type: 'line', text: 'Apresente-se e Dispensado.' },
+                            { type: 'line', text: 'Você já conhece esses comandos?' },
+                            { type: 'orientation', text: 'Caso o soldado/policial conheça os comandos, apenas pule para a prática, caso ele não conheça, repasse a explicação abaixo.' },
+                            { type: 'orientation', text: 'Caso tenha mais de um soldado/policial, ou mais e um deles não conheça os comandos, repassar a explicação dos comandos apresente-se e dispensado.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO NÃO SAIBA',
+                                        content: [
+                                        { type: 'line', text: 'Agora serão ensinados os dois novos comandos. Preste atenção!' },
+                                        { type: 'line', text: 'Apresente-se: Ao receber o comando SENTIDO, fique em posição' },
+                                        { type: 'line', text: 'de sentido, em seguida, será dado o comando APRESENTE-SE.' },
+                                        { type: 'line', text: 'Nesse momento, dirija-se até o quadrado à frente do superior' },
+                                        { type: 'line', text: 'hierárquico, acene e aguarde que o superior retribua o gesto, então diga:' },
+                                        { type: 'line', text: '“Senhor(a), Soldado/Policial (seu nickname) apresentando-se, senhor(a)!”' },
+                                        { type: 'line', text: 'Dispensado: após se apresentar, será dado o comando DISPENSADO. Você deve ' },
+                                        { type: 'line', text: 'DISPENSADO. Você deve ' },
+                                        { type: 'line', text: 'acenar (ainda à frente do superior), aguardar ele retribuir (acenar de volta) e, em ' },
+                                        { type: 'line', text: 'seguida, voltar ao EXATO LOCAL DO SENTIDO.' },
+                                        { type: 'line', text: 'Alguma dúvida?' },
+                                        { type: 'orientation', text: 'Caso o soldado tenha dúvidas, esclareça-as; caso contrário, prossiga.' },
+                                    ]
+                                },
+                                { type: 'line', text: 'Vamos praticar! Você possui 3 chances para executar ambos os comandos ' },
+                                { type: 'line', text: 'corretamente. Caso ultrapasse esse limite, será reprovado no teste prático.' },
+                                { type: 'spoiler', 
+                                        title: 'EM CASOS DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você esgotou suas chances e está reprovado(a).' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista! ' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você. Está dispensado(a)!' },
+                                    ]
+                                },
+                                { type: 'orientation', text: 'Prossiga a aula normalmente com os soldados que permanecerem. Caso não haja nenhum, finalize e registre a aula no system.' },
+                    ] 
+                }, 
+                { content: [
+                    { type: 'title', text: 'HIERARQUIA'},
+                    { type: 'line', text: 'A hierarquia define a autoridade e a subordinação entre os'},
+                    { type: 'line', text: 'policiais, com base em patentes, antiguidade e precedência —'},
+                    { type: 'line', text: 'mesmo fora do serviço ativo.'},
+                    { type: 'line', text: 'Ela é dividida em três corpos principais:'},
+                    { type: 'line', text: 'Praças do Corpo Militar: Soldado, Cabo, Sargento, Subtenente e Suboficial.'},
+                    { type: 'line', text: 'Praças do Corpo Empresarial: Policial, Escrivão, Delegado, Advogado e Promotor.'},
+                    { type: 'line', text: 'Oficiais do Corpo Militar: 2° Tenente, 1° Tenente, Capitão, Major e Tenente-Coronel.'},
+                    { type: 'line', text: 'Oficiais do Corpo Empresarial: Comissário, Ministro, Diretor, Supervisor e Vice-Presidente.'},
+                    { type: 'line', text: 'Estado-Maior do Corpo Militar: Coronel, Subcomandante e Comandante.'},
+                    { type: 'line', text: 'Estado-Maior do Corpo Empresarial: Presidente, Executive e Chanceler.'},
+                    { type: 'line', text: 'O Corpo Empresarial se diferencia do Militar em aspectos como fardamento e missão.'},
+                    { type: 'line', text: 'Como identificar?'},
+                    { type: 'line', text: 'A cor da camiseta no Corpo Empresarial indica a equivalência'},
+                    { type: 'line', text: 'com as patentes militares.'},
+                    { type: 'line', text: 'Exemplo: se um Policial Empresarial veste a mesma cor que um'},
+                    { type: 'line', text: 'Soldado, ele é considerado equivalente a essa patente.'}
+                ] 
+                }, 
+            { content: [
+                    { type: 'title', text: 'COMPORTAMENTO'},
+                    { type: 'line', text: 'Bom, os dois principais fatores para ter um bom comportamento são a disciplina e o respeito.'},
+                    { type: 'line', text: 'Disciplina: A disciplina militar é o cumprimento integral das leis, regulamentos e '},
+                    { type: 'line', text: 'normas. Significa obediência às ordens dos superiores, respeito às regras '},
+                    { type: 'line', text: 'estabelecidas e dedicação ao serviço.'},
+                    { type: 'line', text: 'Respeito: O respeito é um valor que permite ao militar reconhecer e valorizar o '},
+                    { type: 'line', text: 'próximo, demonstrando gratidão, reverência e companheirismo.'},
+                    { type: 'line', text: 'Alguma dúvida?'},
+                    { type: 'orientation', text: 'Aguarde o(s) soldado(s) responder. Caso ele tenha dúvidas, esclareça-as; caso contrário, prossiga com a instrução.'},
+                ] 
+                },
+                  { content: [
+                    { type: 'title', text: 'EXAME TEÓRICO'},
+                    { type: 'line', text: 'Agora serão feitas 04 perguntas referentes ao conteúdo que foi ensinado.'},
+                    { type: 'line', text: 'Você(s) deve(m) acertar pelo menos 02 questões para conseguir a aprovação. Desde já, boa sorte!'},
+                    { type: 'orientation', text: 'Caso o soldado/policial cometa o terceiro erro, reprove-o imediatamente! '},
+                    { type: 'orientation', text: 'Caso o soldado/policial erre 02 questões, faça a correção ao final do exame, explicando a forma correta.'},
+                    { type: 'orientation', text: 'Lembrando: não forneça as respostas aos soldados, principalmente aos reprovados. '},
+                    { type: 'orientation', text: 'As respostas dos soldados não precisam estar igual ao script. É importante que você avalie se o soldado soube entender o que é proposto na aula.'},
+                    { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM SOLDADO/POLICIAL',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os soldados/policiais não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                },
+                ]
+                },
+                                     { 
+                        content: [
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 – O que é fundamental para ter um bom comportamento?' },
+                            { type: 'orientation', text: 'R.: Disciplina e respeito.' },
+                            { type: 'line', text: 'Questão 02 – A hierarquia militar da FEB é dividida em quais corpos?' },
+                            { type: 'orientation', text: 'R.: Em 3 corpos: Corpo de Praças, Corpo de Oficiais e Estado-Maior.' },
+                            { type: 'line', text: 'Questão 03 – Como diferenciar um militar do Corpo Militar de um do Corpo Empresarial?' },
+                            { type: 'orientation', text: 'R.: Pelo fardamento e pela missão.' },
+                            { type: 'line', text: 'Questão 04 – Cite qual a hierarquia do Corpo Militar da FEB. Sem Abreviações!' },
+                            { type: 'orientation', text: 'R.: Soldado, Cabo, Sargento, Subtenente, Suboficial, 2° Tenente, 1° Tenente, Capitão, Major, Tenente-Coronel, Coronel, Subcomandante e Comandante.' },
+                            { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Lamento, mas infelizmente você errou mais de duas questões e está reprovado(a). ' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você.  Está dispensado(a)!' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os soldados/policiais que permanecerem. Caso não haja nenhum, finalize e registre a aula no system.' },
+                        ]
+                    }, 
+                    { content: [
+                    { type: 'title', text: 'PAGAMENTO'},
+                    { type: 'line', text: 'O pagamento na Força Expedicionária Brasileira ocorre'},
+                    { type: 'line', text: 'mensalmente, sendo 3 moedas por hora.'},
+                    { type: 'line', text: 'Para isso, usamos um sistema de turnos pelo system, onde'},
+                    { type: 'line', text: 'conseguimos marcar o nosso tempo em base e em funções.'},
+                ] 
+                },
+                    { content: [
+                    { type: 'title', text: 'FEB SYSTEM E FINALIZAÇÃO'},
+                    { type: 'line', text: 'O System é o núcleo da nossa instituição. É nele que são registrados dados como'},
+                    { type: 'line', text: 'aulas, documentos, promoções e outras informações essenciais para o funcionamento da FEB.'},
+                    { type: 'line', text: 'Por isso, é fundamental que você crie sua conta no System, pois'},
+                    { type: 'line', text: 'ela será necessária ao longo da sua jornada.'},
+                    { type: 'line', text: 'Antes disso, parabéns! Você foi aprovado no Curso de Formação de Soldados/Policiais.'},
+                    { type: 'line', text: 'Acrescente em sua missão a sigla [CFSd] caso seja soldado,'},
+                    { type: 'line', text: 'ficando exatamente assim: [FEB] Soldado [CDE] [CFSd].'},
+                    { type: 'line', text: 'Se for membro do Corpo Empresarial, pode acrescentar em sua missão [CFPol].'},
+                    { type: 'orientation', text: 'Aguarde o(s) soldado(s) concluir o procedimento para dar continuidade!'},
+                    { type: 'line', text: 'Para criar sua conta no System, acesse: bit*ly/esgm-a (troque o * por um ponto “.”)'},
+                    { type: 'line', text: 'Ao acessar você irá selecionar o CURSO DE FORMAÇÃO DE SOLDADO/POLICIAL.'},
+                    { type: 'line', text: 'Caso esteja no mobile, é possível que acabe sendo desconectado do jogo.'},
+                    { type: 'line', text: 'Portanto, siga corretamente o que está no slide e, em caso de dúvidas,'},
+                    { type: 'line', text: 'volte ao batalhão e procure um superior para lhe orientar.'},
+                    { type: 'line', text: 'Leia atentamente e siga as instruções. Após realizar o processo, me comunique.'},
+                    { type: 'orientation', text: 'Poste a aula no System do(s) soldado(s) aprovado(s)! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução, juntamente com a printscreen do início e fim da aula.'},
+                    { type: 'orientation', text: 'Caso o soldado caia durante a criação da conta, não tem problema.'},
+                ] 
+                },
+                {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    }
+        ] 
+    },
+            'CFCb': { title: 'CURSO DE FORMAÇÃO DE CABO/ESCRIVÃO', 
+            steps: [ 
+ {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, Cabo/Escrivão! Neste momento, eu, instrutor(a) [USERNAME], e irei aplicar' },
+                            { type: 'line', text: 'o seu exame do Curso de Formação de Cabos/Escrivães.' },
+                            { type: 'line', text: 'Se eu cair, aguarde cerca de 5 minutos. ' },
+                            { type: 'line', text: 'Caso eu não retorne, voltem ao batalhão pelo navegador' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde o(s) aluno(s) responder. Caso ele tenha dúvidas, esclareça-as; caso contrário, prossiga com a instrução.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME - CONFERÊNCIA NO SYSTEM' },
+                            { type: 'line', text: 'Agora, você(s) será(ão) submetido(s) a um teste de conferência de militares no System.' },
+                            { type: 'line', text: 'Vou fornecer 3 nicknames diferentes e você deve verificar no System' },
+                            { type: 'line', text: 'se eles estão ativos, inativos, exonerados ou se não constam.' },
+                            { type: 'line', text: 'Além disso, caso estejam ativos, deve verificar os cursos e enviar aqui no seguinte formato:' },
+                            { type: 'line', text: 'Nick – Ativo / Cursos completos ou Cursos incompletos' },
+                            { type: 'line', text: 'Nick – Inativo' },
+                            { type: 'line', text: 'Nick - Não consta' },
+                            { type: 'line', text: 'Nick - Exonerado' },
+                            { type: 'line', text: 'Vamos iniciar, mas antes: está com o System aberto?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s). Caso não esteja, peça para abrirem e confirmarem após a abertura.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM CABO/ESCRIVÃO',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os cabos/escrivães não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                            },
+                            { type: 'line', text: 'Você(s) possue(m) 7 minutos para verificar os três nicknames.' },
+                            { type: 'line', text: 'mark13' },
+                            { type: 'orientation', text: 'R.: Ativo/Consta' },
+                            { type: 'line', text: '_piloti_' },
+                            { type: 'orientation', text: 'R.: Ativo/Consta' },
+                            { type: 'line', text: '_piloti_' },
+                            { type: 'orientation', text: 'R.: Não consta' },
+                            { type: 'line', text: 'joaofariasj' },
+                            { type: 'orientation', text: 'R.: Ativo/Consta' },
+                            { type: 'orientation', text: 'Espere a resposta do(s) aluno(s) durante 7 minutos, caso ultrapasse esse tempo, reprove-o imediatamente.' },
+                            { type: 'orientation', text: 'Quando a verificação for concluida continue da linha de baixo:' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s).' },
+                            { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você atingiu o tempo máximo e está reprovado(a).' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você. Está dispensado(a)!' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os alunos que permanecerem. Caso não haja nenhum, finalize e registre a aula.' },
+                        ]
+                    },
+                        { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Agora, será(ão) feitas 06 perguntas referentes ao conteúdo que foi ensinado.' },
+                            { type: 'line', text: 'Você(s) deve(m) acertar pelo menos 05 questões para conseguir a aprovação. Desde já, boa sorte!' },
+                            { type: 'orientation', text: 'Caso o aluno cometa mais de um erro, reprove-o imediatamente!' },
+                            { type: 'orientation', text: 'Caso o aluno erre 1 questão, faça a correção ao final do exame, explicando a forma correta.' },
+                            { type: 'orientation', text: 'Lembrando: não forneça as respostas aos alunos, principalmente aos reprovados.' },
+                            { type: 'orientation', text: 'As respostas dos alunos não precisam estar igual ao script. É importante que você avalie se o aluno soube entender o que é proposto na aula.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM CABO/ESCRIVÃO',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os cabos/escrivães não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                            },
+
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 - O que é a sala operacional? Quais patentes/cargos podem entrar por ela?' },
+                            { type: 'orientation', text: 'R.: é o local de entrada de todos os militares inferiores a suboficial, ou seja, soldados, cabos, sargentos e subtenentes.' },
+                            { type: 'line', text: 'Questão 02 - Qual a função do Operador 1?' },
+                            { type: 'orientation', text: 'R.: verificar corretamente os requisitos básicos de um militar, sendo: fardamento, missão e grupos e, além disso, a visibilidade/status do perfil.' },
+                            { type: 'line', text: 'Questão 03 - Qual a função do Operador 2?' },
+                            { type: 'orientation', text: 'R.: verificar o balão de fala, costas, FEBSystem (TAG e cursos) e se o policial consta como ativo.' },
+                            { type: 'line', text: 'Questão 04 - Qual a função do Operador 3?' },
+                            { type: 'orientation', text: 'R.: verifica os requisitos básicos (fardamento, missão e grupos), balão de fala, costas, visibilidade/status do perfil, além de conferir se o recruta é exonerado ou consta como ativo.' },
+                            { type: 'line', text: 'Questão 05 - Qual a função do Sentinela?' },
+                            { type: 'orientation', text: 'R.: aplicar a pré-aula aos novos recrutas e liberar para a aula.' },
+                            { type: 'line', text: 'Questão 06 - Cite no mínimo duas regras de segurança pessoal.' },
+                            { type: 'orientation', text: 'R.: - Não compartilhar seus dados, mesmo com amigos próximos ou parentes;<br>- Não armazenar suas senhas em locais online ou em blocos de notas;<br>- Não acessar sites suspeitos ou estranhos, especialmente os que prometem fornecer “moedas”;<br>- Jamais compartilhar sua conta com terceiros, sejam amigos ou parentes;<br>- Seguir as regras da Habbo Etiqueta;<br>- Seguir as regras e documentações da instituição.' },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os alunos que permanecerem. Caso não haja nenhum, finalize e registre a aula.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'CONCLUSÃO' },
+                                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você errou mais de uma questão e está reprovado(a). ' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você. Está dispensado(a)!' },
+                                    ]
+                                },
+                                                            { type: 'spoiler', 
+                                        title: 'EM CASO DE APROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Parabéns, você foi aprovado no Curso de Formação de Cabos/Escrivães!' },
+                                        { type: 'line', text: 'Acrescente em sua missão a sigla [CFCb] caso seja cabo do corpo militar,' },
+                                        { type: 'line', text: 'ficando exatamente assim: [FEB] Cabo [CDE] [CFCb].' },
+                                        { type: 'line', text: 'Caso seja Escrivão do corpo empresarial, coloque [CFCe].' },
+                                        { type: 'orientation', text: 'Aguarde o(s) aluno(s) realizar os procedimentos.' },
+                                        { type: 'line', text: 'Excelente, agora com a conclusão do curso já poderá assumir essas novas funções.' },
+                                        { type: 'line', text: 'Lembre-se sempre de todo conteúdo abordado e regras de segurança para' },
+                                        { type: 'line', text: 'que não tenha nenhum problema no futuro!' },
+                                        { type: 'line', text: 'Aguarde enquanto posto a aula.' },
+                                        { type: 'orientation', text: 'Poste a aula no System dos alunos aprovados! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução, juntamente com a printscreen do início e fim da aula.' },
+                                        { type: 'orientation', text: 'Em casos de erro de postagem no System, procure um membro do SRA.' },
+                                    ]
+                                },
+                        ]
+                    },
+                                    {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    }
+        ] 
+    },
+            'CFSgt': { title: 'CURSO DE FORMAÇÃO DE SARGENTO/DELEGADO', 
+            steps: [ 
+                 {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, Sargento/Delegado! Neste momento, eu, instrutor(a) [USERNAME], e irei aplicar' },
+                            { type: 'line', text: 'o seu exame do Curso de Formação de Sargentos/Delegados.' },
+                            { type: 'line', text: 'Se eu cair, aguarde cerca de 5 minutos. ' },
+                            { type: 'line', text: 'Caso eu não retorne, voltem ao batalhão pelo navegador' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde o(s) aluno(s) responder. Caso ele tenha dúvidas, esclareça-as; caso contrário, prossiga com a instrução.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Agora, será(ão) feitas 05 perguntas referentes ao conteúdo que foi ensinado.' },
+                            { type: 'line', text: 'Você(s) deve(m) acertar todas as questões sem nenhum erro. Desde já, boa sorte!' },
+                            { type: 'orientation', text: 'Caso o aluno cometa um erro, reprove-o imediatamente!' },
+                            { type: 'orientation', text: 'Lembrando: não forneça as respostas aos alunos, principalmente aos reprovados.' },
+                            { type: 'orientation', text: 'As respostas dos alunos não precisam estar igual ao script. É importante que você avalie se o aluno soube entender o que é proposto na aula.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM SARGENTO/DELEGADO',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os sargento/delegado não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                            },
+
+                        ]
+                    },
+                                        { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 - O que é OG e quais são as suas atribuições?' },
+                            { type: 'orientation', text: 'R.: Oficial da Guarda (OG): É responsável por coordenar todos os setores do batalhão, garantir o bom funcionamento das atividades e supervisionar a rotação de funções.' },
+                            { type: 'line', text: 'Questão 02 - O que é CG e AO e quais são as suas atribuições?' },
+                            { type: 'orientation', text: 'R.: Cabo da Guarda (CG): é o responsável pela gestão da recepção e dos alistamentos, garantindo atendimento cordial, triagem correta e manutenção da organização do setor.<br><br>Auxiliar Operacional (AO): responsável pela administração da sala operacional (brigada), podendo repor e alternar os operadores.' },
+                            { type: 'line', text: 'Questão 03 - Explique a diferença entre rigidez e pulso firme.' },
+                            { type: 'orientation', text: 'R.: a rigidez é demonstrada na seriedade e na exigência do melhor dos seus subalternos, cobrando e corrigindo os erros. O pulso firme é demonstrado por meio da segurança em suas palavras e ações.' },
+                            { type: 'line', text: 'Questão 04 - O que é a comunicação?' },
+                            { type: 'orientation', text: 'R.: A comunicação é basicamente transmitir informação, ideia, pensamento ou emoção da forma mais clara e objetiva possível.' },
+                            { type: 'line', text: 'Questão 05 - Quantas e quais são as funções existentes no batalhão? (sem abreviar)' },
+                            { type: 'orientation', text: 'R.: Cabo da Guarda, Oficial da Guarda, Auxiliar Operacional, Operadores, Recepção e Sentinela.' },
+                            { type: 'orientation', text: 'Se o militar for aprovado, avance diretamente para o teste prático.' },
+                            { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você errou uma questão e está reprovado(a).' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você. Está dispensado(a)!' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os alunos que permanecerem. Caso não haja nenhum, finalize e registre a aula.' },
+                        ]
+                    },
+                                    { content: 
+                    [
+                        { type: 'title', text: 'EXAME PRÁTICO'},
+                        { type: 'line', text: 'Agora, será realizado um exame prático, onde você deverá assumir o papel'},
+                        { type: 'line', text: 'de Cabo da Guarda diante de algumas situações simuladas. Podemos iniciar?'},
+
+                        { type: 'orientation', text: '<strong>Simulações:</strong><br><br><strong>1</strong> - Assuma o posto de Oficial da Guarda e simule um sentido para o batalhão.<br><br><strong>2</strong> - Vista-se como soldado e sente-se na recepção para simular um alistamente, e comece a ser rude com o recruta ficticio e passar informações incorretas, como por exemplo pedir para colocar na missão: [FEB] Recruta.'},
+                    ] 
+                }, 
+                    { 
+                        content: [
+                            { type: 'title', text: 'FINALIZAÇÃO' },
+                                        { type: 'line', text: 'Parabéns, você foi aprovado no Curso de Formação de Sargentos/Delegados!' },
+                                        { type: 'line', text: 'Acrescente em sua missão a sigla [CFSgt], ficando exatamente assim: [FEB] Sargento [TAG] [CFSgt].' },
+                                        { type: 'line', text: 'Caso seja Delegado do CE, coloque [CFDel].' },
+                                        { type: 'line', text: 'Excelente, agora que concluiu o curso já está liberado para' },
+                                        { type: 'line', text: 'assumir as funções de Cabo da Guarda (CG) e Auxiliar Operacional (AO).' },
+                                        { type: 'line', text: 'Aguarde enquanto posto a aula.' },
+                                        { type: 'orientation', text: 'Poste a aula no System dos alunos aprovados! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução, juntamente com a printscreen do início e fim da instrução.' },
+                                        { type: 'orientation', text: 'Em casos de erro de postagem no System, procure um membro do SRA.' },
+                        ]
+                    },
+                    {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    }
+                    
+        ] 
+    },
+            'CFSbt': {
+                title: 'CURSO DE FORMAÇÃO DE SUBTENENTE/ADVOGADO',
+                steps: [ 
+ {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, Subtenente/Advogado! Neste momento, eu, instrutor(a) [USERNAME], e irei aplicar' },
+                            { type: 'line', text: 'o seu exame do Curso de Formação de Subtenentes/Advogados.' },
+                            { type: 'line', text: 'Se eu cair, aguarde cerca de 5 minutos. ' },
+                            { type: 'line', text: 'Caso eu não retorne, voltem ao batalhão pelo navegador' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde o(s) aluno(s) responder. Caso ele tenha dúvidas, esclareça-as; caso contrário, prossiga com a instrução.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Agora, será(ão) feitas 05 perguntas referentes ao conteúdo que foi ensinado.' },
+                            { type: 'line', text: 'Você(s) deve(m) acertar todas as questões sem nenhum erro. Desde já, boa sorte!' },
+                            { type: 'orientation', text: 'Caso o aluno cometa um erro, reprove-o imediatamente!' },
+                            { type: 'orientation', text: 'Lembrando: não forneça as respostas aos alunos, principalmente aos reprovados.' },
+                            { type: 'orientation', text: 'As respostas dos alunos não precisam estar igual ao script. É importante que você avalie se o aluno soube entender o que é proposto na aula.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM SUBTENENTE/ADVOGADO',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os subtenente/advogado não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                            },
+
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 - Quais são os principais documentos da instituição?' },
+                            { type: 'orientation', text: 'R.: Constituição Militar<br>Código Penal Militar<br>Anexo I - Punições<br>Anexo II - Exonerações<br>Anexo III - Política de Identificação e Normas<br>Plano de Controle Emergencial.' },
+                            { type: 'line', text: 'Questão 02 - Como subtenente você pode promover até qual patente/cargo?' },
+                            { type: 'orientation', text: 'R.: Sargentos/Equivalência' },
+                            { type: 'line', text: 'Questão 03 - Como faço para postar uma promoção?' },
+                            { type: 'orientation', text: 'R.: System = Menu = Atividades = Promoções.' },
+                            { type: 'line', text: 'Questão 04 - O que deve ser feito após uma promoção?' },
+                            { type: 'orientation', text: 'R.: Realizar o Diálogo Pós Promoção (DPP).' },
+                            { type: 'line', text: 'Questão 05 - O que deve ser abordado no DPP? ' },
+                            { type: 'orientation', text: 'R.: Novos desafios da patente; Cursos que deve realizar; Funções que poderá assumir; Reforçar conteúdos e condutas a esperar de um militar.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'CONCLUSÃO' },
+                                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você errou uma questão e está reprovado(a). ' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Em breve, outro(a) instrutor(a) irá aplicar novamente o curso a você. Está dispensado(a)!' },
+                                    ]
+                                },
+                                                            { type: 'spoiler', 
+                                        title: 'EM CASO DE APROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Parabéns, você foi aprovado no Curso de Formação de Subtenente/Advogado!' },
+                                        { type: 'line', text: 'Acrescente em sua missão a sigla [CFSbt], ficando exatamente assim:' },
+                                        { type: 'line', text: '[FEB] Subtenente [TAG] [CFSbt].' },
+                                        { type: 'line', text: 'Caso seja Promotor do CE, coloque [CFAdv].' },
+                                        { type: 'orientation', text: 'Aguarde o(s) aluno(s) realizar os procedimentos.' },
+                                        { type: 'line', text: 'Agora que concluiu o CFSbt e possui uma base do que se trata as documentações,' },
+                                        { type: 'line', text: 'é de extrema importância que comece o quanto antes a ler os documentos.' },
+                                        { type: 'line', text: 'Aguarde enquanto posto a aula.' },
+                                        { type: 'orientation', text: 'Poste a aula na planilha de aulas e no System dos alunos aprovados! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução. Em casos de erro de postagem no System, procure um membro do SRA. Já em casos de erro de postagem na planilha, faça uma retificação em até 24 horas. O não cumprimento acarretará em punições internas.' },
+                                    ]
+                                },
+                        ]
+                    },
+                                    {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    } 
+            ]
+            }
+        };
+
+        function getCopyableLines(items, lines = []) {
+            if (!items) return lines;
+            items.forEach(item => {
+                if (item.type === 'line' || item.type === 'title') {
+                    lines.push(item.text);
+                } else if (item.type === 'spoiler') {
+                    getCopyableLines(item.content, lines);
+                }
+            });
+            return lines;
+        }
+
+        function initializeCopiedStatus() {
+            for (const key in contentData) {
+                contentData[key].copiedStatus = contentData[key].steps.map(step => {
+                    const lines = getCopyableLines(step.content);
+                    return lines.map(lineText => ({ text: lineText, status: 0 })); // 0: untouched, 1: copied, 2: skipped
+                });
+            }
+        }
+        
+        initializeCopiedStatus();
+
+        function replaceUsername(text) {
+            return text.replace(/\[USERNAME\]/g, userNickname || 'Instrutor');
+        }
+
+        function renderContentRecursive(items, lineCounter) {
+            let html = '';
+            if (!items) return html;
+
+            items.forEach((item) => {
+                const processedText = item.text ? replaceUsername(item.text) : '';
+                
+                switch(item.type) {
+                    case 'title':
+                        html += `
+                            <div class="copyable-line w-full p-1.5 rounded-lg flex items-center gap-3 cursor-pointer group">
+                                <button title="Copiar texto" class="copy-btn flex-shrink-0 p-1.5 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/50" data-copy-text="${processedText.replace(/"/g, '&quot;')}" data-line-index="${lineCounter.count}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                                <h3 class="text-sm font-semibold text-blue-400 text-center uppercase tracking-wider flex-grow">${processedText}</h3>
+                            </div>
+                        `;
+                        lineCounter.count++;
+                        break;
+                    case 'line':
+                        html += `
+                            <div class="copyable-line w-full p-1.5 rounded-lg flex items-center gap-3 cursor-pointer group">
+                                <button title="Copiar texto" class="copy-btn flex-shrink-0 p-1.5 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/50" data-copy-text="${processedText.replace(/"/g, '&quot;')}" data-line-index="${lineCounter.count}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                                <p class="text-sm flex-grow transition-colors duration-300 text-gray-400 justified-text">${processedText}</p>
+                            </div>
+                        `;
+                        lineCounter.count++;
+                        break;
+                    case 'orientation':
+                        if (processedText.startsWith('R.:')) {
+                            html += `<div class="text-xs text-green-300 px-3 py-2 rounded-r-lg bg-green-900/40 border-l-2 border-green-700/80 my-2">${processedText}</div>`;
+                        } else {
+                            html += `<div class="text-xs text-gray-400 px-3 py-2 rounded-r-lg bg-gray-800/40 border-l-2 border-gray-600 my-3 whitespace-pre-wrap justified-text">${processedText}</div>`;
+                        }
+                        break;
+                    case 'spoiler':
+                        const uniqueSpoilerId = `spoiler-content-${currentStep}-${Math.random().toString(36).substr(2, 9)}`;
+                        const spoilerContentHtml = renderContentRecursive(item.content, lineCounter);
+                        html += `
+                            <div class="my-4">
+                                <button class="spoiler-toggle collapsed w-full flex items-center justify-between p-3 rounded-lg text-gray-100 transition-colors" data-spoiler-target-id="${uniqueSpoilerId}">
+                                    <span class="font-medium text-sm">${item.title}</span>
+                                    <svg class="arrow w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </button>
+                                <div id="${uniqueSpoilerId}" class="spoiler-content hidden">
+                                    <div class="p-3 border-l-2 border-gray-700/50">
+                                        ${spoilerContentHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'final-page':
+                        html += `
+                            <div class="flex flex-col items-center justify-center h-full w-full space-y-4 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-green-400 mb-4"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <h3 class="text-lg font-bold text-gray-100">AULA FINALIZADA!</h3>
+                                <p class="text-sm max-w-xs">Registre a aula no system e formulário.</p>
+                                <div class="w-full max-w-xs pt-4 space-y-3">
+                                <a href="https://feb.syshabbo.com/aula" target="_blank" class="flex items-center justify-center p-3 w-full final-page-button btn-system">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                    Postar no FEBSystem
+                                </a>
+                                <a href="https://forms.gle/gUC2jVMAg3KXZRAP9" target="_blank" class="flex items-center justify-center p-3 w-full final-page-button btn-form">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    Postar no formulário
+                                </a>
+                                <a href="https://docs.google.com/spreadsheets/d/1ICn6nroTluC2w8u7C0ygHkMI21_A3GvFY2IMS2D5-T4/edit?usp=sharing" target="_blank" class="flex items-center justify-center p-3 w-full final-page-button btn-report">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="12"></line><line x1="7" y1="18" x2="7" y2="15"></line><line x1="17" y1="18" x2="17" y2="9"></line></svg>
+                                    Conferir relatório
+                                </a>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+            });
+            return html;
+        }
+
+        function renderStep() {
+            const data = contentData[currentOption];
+            if (!data) return;
+
+            const stepData = data.steps[currentStep];
+            const totalSteps = data.steps.length;
+            const lineCounter = { count: 0 };
+            const contentHtml = renderContentRecursive(stepData.content, lineCounter);
+            
+            const isFinalPage = stepData.content.some(item => item.type === 'final-page');
+
+            boxContent.innerHTML = `
+                <div class="flex flex-col h-full animate-fade-in">
+                    <h2 class="text-lg font-bold tracking-tight text-center mb-2 text-gray-100">${data.title}</h2>
+                    <div id="box-content-scroll" class="flex-grow overflow-y-auto pr-2 space-y-1 pb-3">
+                        ${contentHtml}
+                    </div>
+                    ${isFinalPage ? '' : `
+                    <div class="mt-auto pt-3 flex items-center justify-between border-t border-white/10">
+                        <button class="nav-control p-2 rounded-lg transition-colors text-gray-400" id="prev-btn" title="Anterior" ${currentStep === 0 ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500 font-medium text-sm">Página</span>
+                            <input type="number" id="step-input" class="w-12 text-center text-sm font-medium bg-gray-700/50 rounded-md border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500" value="${currentStep + 1}" min="1" max="${totalSteps}">
+                            <span class="text-gray-500 font-medium text-sm">de ${totalSteps}</span>
+                            <button id="go-btn" class="nav-control p-2 rounded-lg transition-colors text-gray-400" title="Ir para a página">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </button>
+                        </div>
+                        
+                        <button class="nav-control p-2 rounded-lg transition-colors text-gray-400" id="next-btn" title="Próximo" ${currentStep === totalSteps - 1 ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                    `}
+                </div>
+            `;
+            
+            updateCopyStatusStyles();
+        }
+
+        function updateCopyStatusStyles() {
+            const data = contentData[currentOption];
+            if (!data) return;
+            
+            const stepStatus = data.copiedStatus[currentStep];
+            if (!stepStatus) return;
+
+            const copyableLineElements = boxContent.querySelectorAll('.copyable-line');
+            
+            copyableLineElements.forEach((lineElement) => {
+                const copyBtn = lineElement.querySelector('.copy-btn');
+                if (!copyBtn) return;
+                
+                const index = parseInt(copyBtn.dataset.lineIndex, 10);
+                if (isNaN(index) || index >= stepStatus.length) return; 
+
+                const p = lineElement.querySelector('p, h3');
+                if (!p) return;
+
+                const status = stepStatus[index].status;
+                p.classList.remove('text-gray-400', 'text-green-400', 'text-red-400', 'text-blue-400', 'text-opacity-50');
+                
+                if (status === 1) { // Copied
+                    p.classList.add('text-green-400');
+                } else if (status === 2) { // Skipped
+                    p.classList.add('text-gray-400', 'text-opacity-50');
+                } else { // Default
+                    if (p.tagName === 'P') p.classList.add('text-gray-400');
+                    else p.classList.add('text-blue-400');
+                }
+            });
+        }
+        
+        function handleNavigation(direction) {
+            const contentContainer = boxContent.querySelector('.flex.flex-col');
+            if (contentContainer) {
+                contentContainer.classList.remove('animate-fade-in');
+                contentContainer.classList.add('animate-content-fade-out');
+                setTimeout(() => {
+                    currentStep += direction;
+                    renderStep();
+                }, 300);
+            }
+        }
+        
+        function updateNavIndicator(targetButton) {
+            if (targetButton) {
+                navIndicator.style.width = `${targetButton.offsetWidth}px`;
+                navIndicator.style.left = `${targetButton.offsetLeft}px`;
+                navIndicator.style.opacity = '1';
+            } else {
+                navIndicator.style.opacity = '0';
+            }
+        }
+
+        navContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('.nav-btn');
+            if (button) {
+                if(isInitialLayout) {
+                    isInitialLayout = false;
+                    appWrapper.classList.remove('justify-center');
+                    appWrapper.classList.add('pt-8', 'pb-8');
+                }
+                
+                const showNewContent = () => {
+                    currentOption = button.dataset.option;
+                    currentStep = 0;
+                    initialMessage.classList.add('hidden');
+                    contentBox.classList.remove('hidden');
+                    contentBox.style.display = 'flex';
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateNavIndicator(button);
+                    contentBox.classList.add('animate-slide-up-fade');
+                    renderStep();
+                };
+
+                if (currentOption && currentOption !== button.dataset.option) {
+                    contentBox.classList.remove('animate-slide-up-fade');
+                    contentBox.classList.add('animate-fade-out');
+                    setTimeout(() => {
+                        contentBox.classList.remove('animate-fade-out');
+                        showNewContent();
+                    }, 300);
+                } else if (!currentOption) {
+                    showNewContent();
+                }
+            }
+        });
+        
+        navButtons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                if (!button.classList.contains('active')) {
+                    updateNavIndicator(button);
+                }
+            });
+        });
+
+        navContainer.addEventListener('mouseleave', () => {
+            const activeButton = navContainer.querySelector('.nav-btn.active');
+            updateNavIndicator(activeButton);
+        });
+
+        function performCopy(copyBtn) {
+            const data = contentData[currentOption];
+            if (!data) return;
+
+            const textToCopy = copyBtn.dataset.copyText;
+            const stepStatus = data.copiedStatus[currentStep];
+            const currentIndex = parseInt(copyBtn.dataset.lineIndex, 10);
+
+            if (isNaN(currentIndex) || !stepStatus || currentIndex >= stepStatus.length) {
+                console.error("Índice de linha inválido ou estado inconsistente.");
+                return;
+            }
+            
+            stepStatus[currentIndex].status = 1;
+
+            for (let i = 0; i < currentIndex; i++) {
+                if (stepStatus[i].status === 0) {
+                    stepStatus[i].status = 2; // Mark as skipped
+                }
+            }
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalIcon = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"/></svg>`;
+                copyBtn.disabled = true;
+
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalIcon;
+                    copyBtn.disabled = false;
+                }, 1500);
+
+            } catch (err) {
+                console.error('Falha ao copiar: ', err);
+            }
+
+            document.body.removeChild(tempInput);
+            updateCopyStatusStyles();
+        }
+
+        function handleGoToStep() {
+            const stepInput = document.getElementById('step-input');
+            const stepNumber = parseInt(stepInput.value, 10);
+            const totalSteps = contentData[currentOption].steps.length;
+
+            if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > totalSteps) {
+                stepInput.classList.add('border-red-500');
+                setTimeout(() => stepInput.classList.remove('border-red-500'), 1000);
+            } else {
+                currentStep = stepNumber - 1;
+                renderStep();
+            }
+        }
+
+        boxContent.addEventListener('click', (event) => {
+            const prevBtn = event.target.closest('#prev-btn');
+            const nextBtn = event.target.closest('#next-btn');
+            const goBtn = event.target.closest('#go-btn');
+            const spoilerToggle = event.target.closest('.spoiler-toggle');
+            const lineElement = event.target.closest('.copyable-line');
+            const copyBtnInsideLine = event.target.closest('.copy-btn');
+
+            if (prevBtn && !prevBtn.disabled) { handleNavigation(-1); }
+            if (nextBtn && !nextBtn.disabled) { handleNavigation(1); }
+            if (goBtn) { handleGoToStep(); }
+            
+            // Allow clicking anywhere on the line to copy
+            if (lineElement && !copyBtnInsideLine) {
+                 const copyBtn = lineElement.querySelector('.copy-btn');
+                 if (copyBtn && !copyBtn.disabled) performCopy(copyBtn);
+            }
+            // Also allow clicking the button directly
+             if (copyBtnInsideLine && !copyBtnInsideLine.disabled) {
+                performCopy(copyBtnInsideLine);
+            }
+            
+            if (spoilerToggle) {
+                const targetId = spoilerToggle.dataset.spoilerTargetId;
+                const spoilerContent = document.getElementById(targetId);
+                if (spoilerContent) {
+                    spoilerContent.classList.toggle('hidden');
+                    spoilerToggle.classList.toggle('collapsed');
+                }
+            }
+        });
+
+        boxContent.addEventListener('keyup', (event) => {
+            if (event.target.id === 'step-input' && event.key === 'Enter') {
+                handleGoToStep();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            appWrapper.classList.add('justify-center');
+            appWrapper.classList.remove('pt-8', 'pb-8');
+
+            contentBox.classList.remove('animate-slide-up-fade');
+            contentBox.classList.add('animate-fade-out');
+
+            setTimeout(() => {
+                isInitialLayout = true;
+                contentBox.classList.add('hidden');
+                contentBox.classList.remove('animate-fade-out');
+                contentBox.style.display = 'none';
+                initialMessage.classList.remove('hidden');
+                currentOption = null;
+                currentStep = 0;
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                updateNavIndicator(null);
+            }, 300);
+        });
+
+        function initializeUser() {
+            const savedNickname = localStorage.getItem('userNickname');
+            if (savedNickname) {
+                userNickname = savedNickname;
+            } else {
+                nicknameModal.classList.remove('hidden');
+                nicknameModal.querySelector('.glass-card').classList.add('animate-scale-up');
+            }
+        }
+
+        saveNicknameBtn.addEventListener('click', () => {
+            const nickname = nicknameInput.value.trim();
+            if (nickname) {
+                userNickname = nickname;
+                localStorage.setItem('userNickname', nickname);
+                nicknameModal.classList.add('animate-fade-out');
+                setTimeout(() => {
+                    nicknameModal.classList.add('hidden');
+                    nicknameModal.classList.remove('animate-fade-out');
+                }, 300);
+            } else {
+                nicknameInput.classList.add('border-red-500');
+                setTimeout(() => nicknameInput.classList.remove('border-red-500'), 2000);
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUser();
+            setTimeout(() => {
+                document.querySelector('main').classList.remove('opacity-0');
+                document.querySelector('footer').classList.remove('opacity-0');
+            }, 100);
+        });
+
+        // --- Bloqueio da inspeção de elementos e atalhos ---
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'u')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
+
